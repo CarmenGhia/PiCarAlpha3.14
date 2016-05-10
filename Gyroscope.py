@@ -174,3 +174,17 @@ if(heading < 0)
 }
 
 magRaw[1] = -magRaw[1];
+
+#exit with (ctrl + c)
+except (KeyboardInterrupt, SystemExit): #when you press ctrl+c
+    print "\nKilling Thread..."
+    gpsp.running = False
+    gpsp.join() # wait for the thread to finish what it's doing
+    p1.stop()
+    p2.stop()
+    p3.stop()
+    p4.stop()
+    GPIO.cleanup()
+
+
+Print "/done Exiting App"
