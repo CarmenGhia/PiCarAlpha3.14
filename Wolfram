@@ -1,0 +1,7 @@
+## input this into Mathmatica 
+
+##data = Import ["~/calibrated.txt", "Table", "FieldSeparators" -> {",", " "}];
+##ListPlot[data[[All, {6, 9}]], AspectRatio -> 1, Frame -> True]
+
+
+
