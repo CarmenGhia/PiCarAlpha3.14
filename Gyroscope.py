@@ -175,6 +175,14 @@ if(heading < 0)
 
 magRaw[1] = -magRaw[1];
 
+# For Wolfram Mathmatica
+magRaw[0]-= (magXmin + magXmax) /2 ;
+magRaw[1] -= (magYmin + magYmax) /2 ;
+magRaw[2] -= (magZmin + magZmax) /2 ;
+
+float heading = 180 * atan2(scaledMag[1],scaledMag[0])/M_PI;
+ 
+
 #exit with (ctrl + c)
 except (KeyboardInterrupt, SystemExit): #when you press ctrl+c
     print "\nKilling Thread..."
