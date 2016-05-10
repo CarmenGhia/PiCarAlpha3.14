@@ -1,0 +1,56 @@
+Hardware:
+------------------------
+
+Raspberry Pi 2 B+
+
+Canakit USB wifi adapter
+[[Dmesg output on inserting wifi adapter is:
+[367959.124059] usb 1-1.4: new high-speed USB device number 10 using dwc_otg
+[367959.241524] usb 1-1.4: New USB device found, idVendor=148f, idProduct=5370
+[367959.241551] usb 1-1.4: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[367959.241569] usb 1-1.4: Product: 802.11 n WLAN
+[367959.241585] usb 1-1.4: Manufacturer: Ralink
+[367959.241601] usb 1-1.4: SerialNumber: 1.0
+[367959.339814] cfg80211: Calling CRDA to update world regulatory domain
+[367959.534079] usb 1-1.4: reset high-speed USB device number 10 using dwc_otg
+[367959.644723] ieee80211 phy0: rt2x00_set_rt: Info - RT chipset 5390, rev 0502 detected
+[367959.665456] ieee80211 phy0: rt2x00_set_rf: Info - RF chipset 5370 detected
+[367959.688954] ieee80211 phy0: Selected rate control algorithm 'minstrel_ht'
+[367959.691037] usbcore: registered new interface driver rt2800usb
+
+Configuration:
+----------------------
+"sudo apt-get hostapd"
+
+"sudo nano /etc/init.d/hostapd"
+add to DAEMON_CONF=/etc/hostapd/hostapd.conf
+
+"sudo nano /etc/hostapd/hostapd.conf"
+interface=wlan0
+driver=nl80211
+ssid=tracker_ap
+hw_mode=g
+channel=6
+macaddr_acl=0
+auth_algs=1
+wmm_enabled=0
+
+"nano /etc/network/interfaces"
+auto lo
+iface lo inet loopback
+iface eth0 inet dhcp
+#allow-hotplug wlan0
+iface wlan0 inet static
+        address 192.168.0.1
+        netmask 255.255.255.0
+#wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+#iface default inet dhcp
+
+
+"sudo service hostapd restart"
+
+That's it. Join another device to "tracker_ap" ssid, give static IP address to that device in the
+192.168.0.2-192.168.0.254/24 range and you are good to go.
+
+The trick is to make sure the wifi adapter supports AP mode and select the right driver 
+in hostapd.conf
