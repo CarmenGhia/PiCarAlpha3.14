@@ -87,3 +87,90 @@ else
        AccYangle += (float)90;
        
 printf ("GyroX  %7.3f \t AccXangle \e[m %7.3f \t \033[22;31mCFangleX %7.3f\033[0m\t GyroY  %7.3f \t AccYangle %7.3f \t \033[22;36mCFangleY %7.3f\t\033[0m\n",gyroXangle,AccXangle,CFangleX,gyroYangle,AccYangle,CFangleY);
+
+
+## Magnetometer (lke a compass)
+
+char filename[20];
+sprintf(filename, "/dev/i2c-%d", 1);
+file = open(filename, O_RDWR);
+if (file<0) {
+        printf("Unable to open I2C bus!");
+        exit(1);
+}
+
+if (ioctl(file, I2C_SLAVE, MAG_ADDRESS) < 0) {
+        printf("Error: Could not select magnetometer\n");
+}
+
+void writeMagReg(uint8_t reg, uint8_t value)
+{
+  int result = i2c_smbus_write_byte_data(file, reg, value);
+    if (result == -1)
+    {
+        printf ("Failed to write byte to I2C Mag.");
+        exit(1);
+    }
+}
+
+writeMagReg( CTRL_REG5_XM, 0b11110000);
+writeMagReg( CTRL_REG6_XM, 0b01100000);
+writeMagReg( CTRL_REG7_XM, 0b00000000);
+
+void  readBlock(uint8_t command, uint8_t size, uint8_t *data)
+{
+    int result = i2c_smbus_read_i2c_block_data(file, command, size, data);
+    if (result != size)
+    {
+       printf("Failed to read block from I2C.");
+        exit(1);
+    }
+}
+
+void readMAG(int  *m)
+
+## Read raw values
+
+{
+        uint8_t block[6];
+ 
+        readBlock(0x80 | OUT_X_L_M, sizeof(block), block);
+        *m = (int16_t)(block[0] | block[1] << 8);
+        *(m+1) = (int16_t)(block[2] | block[3] << 8);
+        *(m+2) = (int16_t)(block[4] | block[5] << 8);
+ 
+}
+
+Prnt Raw Values
+
+int magRaw[3];
+while(1)
+{
+        readMAG(magRaw);
+        printf("magRaw X %i    \tmagRaw Y %i \tMagRaw Z %i \n", magRaw[0],magRaw[1],magRaw[2]);
+        usleep(250000);
+}
+
+## Calculate Heading
+
+heading = 180 * atan2(magRawY,magRawX)/M_PI;
+
+if(heading < 0)
+      heading += 360;
+      
+      while(1)
+{
+        readMAG(magRaw);
+        printf("magRaw X %i    \tmagRaw Y %i \tMagRaw Z %i \n", magRaw[0],magRaw[1],magRaw[2]);
+ 
+        float heading = 180 * atan2(magRaw[1],magRaw[0])/M_PI;
+ 
+        if(heading < 0)
+              heading += 360;
+ 
+        printf("heading %7.3f \t ", heading);
+        usleep(250000);
+ 
+}
+
+magRaw[1] = -magRaw[1];
