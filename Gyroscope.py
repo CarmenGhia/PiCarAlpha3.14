@@ -176,6 +176,14 @@ if(heading < 0)
 magRaw[1] = -magRaw[1];
 
 # For Wolfram Mathmatica
+
+define magXmax 1210
+define magYmax 1245
+define magZmax 1178
+define magXmin -1335
+define magYmin -1142
+define magZmin -1303
+
 magRaw[0]-= (magXmin + magXmax) /2 ;
 magRaw[1] -= (magYmin + magYmax) /2 ;
 magRaw[2] -= (magZmin + magZmax) /2 ;
