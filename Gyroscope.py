@@ -180,6 +180,10 @@ magRaw[0]-= (magXmin + magXmax) /2 ;
 magRaw[1] -= (magYmin + magYmax) /2 ;
 magRaw[2] -= (magZmin + magZmax) /2 ;
 
+scaledMag[0]  = (float)(magRaw[0] - magXmin) / (magXmax - magXmin) * 2 - 1;
+scaledMag[1]  = (float)(magRaw[1] - magYmin) / (magYmax - magYmin) * 2 - 1;
+scaledMag[2]  = (float)(magRaw[2] - magZmin) / (magZmax - magZmin) * 2 - 1;
+
 float heading = 180 * atan2(scaledMag[1],scaledMag[0])/M_PI;
  
 
